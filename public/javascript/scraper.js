@@ -1,6 +1,7 @@
 (function() {
     var GITHUB = 'https://api.github.com/';
     var IDENTITY = '?client_id=b64b63fabc4c7c64aa05&client_secret=b282829f3f3a149d56a48cc1ea3e0aad91e3ed29'
+    var JSONP = '&callback=?';
     var USER = 'jessepollak'
     var forks = 0,
         stars = 0,
@@ -25,7 +26,8 @@
         var promises = [];
         var defer = $.Deferred();
         promises.push();
-        promises.push($.get(GITHUB + 'users/' + USER + IDENTITY, function(data) {
+        promises.push($.get(GITHUB + 'users/' + USER + IDENTITY + JSONP, function(data) {
+            data = data.data;
             followers = data.followers;
             createdAt = data.created_at;
             userData = data;
@@ -33,8 +35,9 @@
         var promise_count = 0;
 
         promises.push($.Deferred(function (def) {
-            $.get(GITHUB + 'users/' + USER + '/orgs' + IDENTITY,
+            $.get(GITHUB + 'users/' + USER + '/orgs' + IDENTITY + JSONP,
                 function(data) {
+                    data = data.data;
                     orgs += data.length;
                     def.resolve();
                 },
@@ -43,8 +46,9 @@
         );
 
         promises.push($.Deferred(function (def) {
-            $.get(GITHUB + 'users/' + USER + '/gists' + IDENTITY,
+            $.get(GITHUB + 'users/' + USER + '/gists' + IDENTITY + JSONP,
                 function(data) {
+                    data = data.data;
                     gists += data.length;
                     def.resolve();
                 },
@@ -54,8 +58,9 @@
 
         promises.push(
             $.Deferred(function (top_def) {
-                $.get(GITHUB + 'users/' + USER + '/repos' + IDENTITY, 
+                $.get(GITHUB + 'users/' + USER + '/repos' + IDENTITY + JSONP, 
                     function(data) {
+                        data = data.data;
                         repos += data.length;
                         for(var i = 0; i < data.length; i++) {
                             var e = data[i];
@@ -66,7 +71,7 @@
                             promises.push($.Deferred(function (def) {
                                 getCommitCount(GITHUB + 'repos/' + 
                                 USER + '/' + e.name + '/commits' + IDENTITY
-                                + '&per_page=100&author=' + USER, def);
+                                + '&per_page=100&author=' + USER + JSONP, def);
                             }));
                         }
 
@@ -122,10 +127,11 @@
     }
 
     function getCommitCount(url, def) {
-        $.ajax({
-            url: url,
-            success: function(resp, status, obj) {
+        $.get(
+            url,
+            function(resp, status, obj) {
                 commits += resp.length;
+                console.log(resp);
                 linkHeader = obj.getResponseHeader('Link');
                 if(linkHeader) {
                     var next = hasNext(linkHeader);
@@ -141,8 +147,9 @@
                         def.resolve();
                     }
                 }
-            }
-        });
+            },
+            'jsonp'
+        );
     }
 
     function hasLast(linkHeader) {
