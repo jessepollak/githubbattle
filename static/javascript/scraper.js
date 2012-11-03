@@ -19,7 +19,8 @@
             getUserData('jessepollak', user1,  def)
         });
 
-    $.when(p).done(function() { console.log(user1); })
+    $.when(p).done(function() { console.log(user1); });
+
     function getUserData(USER, results, user_def) {
         var promises = [];
         var defer = $.Deferred();
