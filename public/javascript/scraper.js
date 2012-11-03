@@ -29,7 +29,7 @@
             followers = data.followers;
             createdAt = data.created_at;
             userData = data;
-        }, 'json'));
+        }, 'jsonp'));
         var promise_count = 0;
 
         promises.push($.Deferred(function (def) {
@@ -38,7 +38,7 @@
                     orgs += data.length;
                     def.resolve();
                 },
-                'json')
+                'jsonp')
             })
         );
 
@@ -48,7 +48,7 @@
                     gists += data.length;
                     def.resolve();
                 },
-                'json')
+                'jsonp')
             })
         );
 
@@ -84,7 +84,7 @@
                             user_def.resolve();
                         });
                     }, 
-                    'json');
+                    'jsonp');
             })
         );
     }
