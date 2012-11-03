@@ -53,10 +53,23 @@ function visualize(e) {
 
             var $fight = $('#submit');
             results = [{}, {}];
-            $fight.text('Loading...');
+            $fight.html("<span>Loading...</span><div>(this will take awhile if you are a badass)</div>");
             $fight.fadeOut(1000).fadeIn(1000);
+            var count = 0;
             var interval = setInterval(function() {
+                count++;
                 $fight.fadeOut(1000).fadeIn(1000);
+                if(count === 5) {
+                    $fight.html("<span>Loading...</span><div>(you're thinking you're real cool right now.)</div>");
+                } else if(count == 10) {
+                    $fight.html("<span>Loading...</span><div>(alright, not bad)</div>");
+                } else if(count == 20) {
+                    $fight.html("<span>Loading...</span><div>(OK, you're a badass.)</div>");
+                } else if(count === 30) {
+                    $fight.html("<span>Loading...</span><div>(No one else has made it this far...)</div>");
+                } else if(count === 45) {
+                    $fight.html("<span>Loading...</span><div>(You've unlocked the secret of life!)</div>");
+                }
             }, 1000);
 
             for(var i = 0; i < users.length; i++) {
@@ -191,7 +204,7 @@ function twitterTemplate(w, l)  {
 
 
 var formattedNames = {
-    'age': 'Age',
+    'age': 'Age (days)',
     'forks': 'Forks/repo',
     'stars': 'Stars/repo',
     'commits': 'Commits/day',
@@ -250,8 +263,13 @@ function dataFormatter(user1, user2, stat, totals) {
         var ratio1 = Math.round((user1[stat] / user1.repositories * 10)) / 10,
             ratio2 = Math.round((user2[stat] / user2.repositories * 10)) / 10;
 
-        var dp1 = Math.floor((ratio1 / (ratio1 + ratio2)) * 100),
-            dp2 = Math.floor((ratio2 / (ratio1 + ratio2)) * 100);   
+        if(ratio1 + ratio2 == 0) {
+            var dp1 = 50,
+                dp2 = 50;
+        } else {
+            var dp1 = Math.floor((ratio1 / (ratio1 + ratio2)) * 100),
+                dp2 = Math.floor((ratio2 / (ratio1 + ratio2)) * 100);   
+        }
 
 
         totals.u1 += dp1 * .15;

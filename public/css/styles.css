@@ -81,6 +81,11 @@ input:focus {
     margin: 0px;
 }
 
+#submit div {
+    font-size: 20px;
+    line-height: 20px;
+}
+
 
 .graph {
     height: 80px;

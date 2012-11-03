@@ -69,6 +69,7 @@ function getUserData(USER, results, user_def) {
                     
                     top_def.resolve();
                     $.when.apply(null, promises).done(function(args1, args2) {
+                        console.log(commits);
                         results.age = createdAt;
                         results.followers = followers;
                         results.forks = forks;
