@@ -69,7 +69,7 @@ function visualize(e) {
                 );
             };
 
-                        function setupGraphs() {
+            function setupGraphs() {
                 var saver = {};
                 var totals = {
                     u1: 0,
@@ -162,7 +162,7 @@ function visualize(e) {
                 $('.retry-container').prepend(twitter);
                 twttr.widgets.load();
             }
-            
+
 
             $.when.apply(null, promises).done(setupGraphs);
         }
@@ -202,7 +202,7 @@ var formattedNames = {
 function reset() {
     $('.graphs-container').empty().hide();
     $('.retry-container').hide();
-    $('#submit').text('FIGHT');
+    $('#submit').text('BATTLE');
     $('#submit').click(visualize);
     $('.user1 input').val('');
     $('.user2 input').val('');
