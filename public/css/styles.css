@@ -146,10 +146,6 @@ input:focus {
 }
 
 .twitter h5 {
-    display: inline;
-    position: relative;
-    left: 10px;
-    bottom: 5px;
     font-family: 'Titillium Web', sans-serif;
     color: white;
 }

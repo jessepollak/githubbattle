@@ -1,6 +1,13 @@
 var stats = ['age', 'stars', 'forks', 'commits', 'repositories', 'gists'], users = [];
 $(document).ready(function() {
     $('#submit').click(visualize);
+
+    $('.user2 input, .user1 input').keypress(function(event) {
+        if (event.which == 13) {
+            event.preventDefault();
+            visualize();
+        }
+    });
 });
 
 function visualize(e) {
@@ -24,9 +31,7 @@ function visualize(e) {
             $.ajax({
                 url: GITHUB + 'users/' + users[i] + IDENTITY + '&callback=?',
                 success: function(data) {
-                    console.log(data.meta);
                     if (data.data && data.data.message == "Not Found") {
-                        console.log('test')
                         fail = true;
                     }
                     def.resolve();
@@ -64,9 +69,7 @@ function visualize(e) {
                 );
             };
 
-            $.when.apply(null, promises).done(setupGraphs);
-
-            function setupGraphs() {
+                        function setupGraphs() {
                 var saver = {};
                 var totals = {
                     u1: 0,
@@ -156,10 +159,12 @@ function visualize(e) {
                     });
                     twitter = twitterTemplate(users[0], users[1]);
                 }
-                console.log(twitter);
                 $('.retry-container').prepend(twitter);
                 twttr.widgets.load();
             }
+            
+
+            $.when.apply(null, promises).done(setupGraphs);
         }
     });
     
@@ -203,7 +208,7 @@ function reset() {
     $('.user2 input').val('');
     $(document.forms[0]).show();
     $('.winner-container').hide();
-    $('.retry-container twitter').remove();
+    $('.retry-container .twitter').remove();
     users = [];
 }
 
