@@ -1,11 +1,79 @@
+<!DOCTYPE>
 <html>
-    <head>
+    <head>  
+        <title>GitBattle</title>
         <link rel='stylesheet' type='text/css' href='css/styles.css'/>
+        <link rel='stylesheet' type='text/css' href='css/foundation.css'/>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
         <script type='text/javascript' src='javascript/scraper.js'></script>
-    </head>
-    <body>
-        <div id='data'>
+        <script type='text/javascript' src='javascript/app.js'></script>
+        <link href='http://fonts.googleapis.com/css?family=Titillium+Web:400,900' rel='stylesheet' type='text/css'>
+        <!--<script type="text/javascript" src="//use.typekit.net/dmn8tfu.js"></script>
+        <script type="text/javascript">try{Typekit.load();}catch(e){}</script>-->
+    </head> 
+    <body> 
+        <div class='row container'>
+            <div class='twelve columns'>
+                <div class='row'>
+                    <div class='eight columns centered center' id='title'>
+                        <h1>Git Fight</h1>
+                        <div class='twitter'>
+                            <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en" data-url='http://gitbattle.com' data-size='medium' data-count='vertical' data-text='I just Git Battled. See if you can beat me!'>Tweet</a>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+                        </div>
+                    </div>
+                </div>
+                <form id='users'>
+                    <div class='row'>
+                        <div class='five columns user user1'>
+                            <input type='text' name='user_1'/>
+                        </div>
+                        <div class='two columns vs center'>
+                            <h2>vs</h2>
+                        </div>
+                        <div class='five columns user user2'>
+                            <input type='text' name='user_2'/>
+                        </div>
+                    </div>
+                    <div class='row submit-container'>
+                        <div class='six columns centered'>
+                            <div id='submit' class='center'>FIGHT</div>
+                        </div>
+                    </div>
+                </form>
+                <div class='row winner-container' style='display: none;'>
+                    <div class='result_1 score six columns'>
+                        <h3 class='center'></h3>
+                        <h2 class='center'>0</h2>
+                    </div>
+                    <div class='result_2 score six columns'>
+                        <h3 class='center'></h3>
+                        <h2 class='center'>0</h2>
+                    </div>
+                </div>
+                <div class='row graphs-container' style='display: none;'>
+                </div>
+                <div class='row retry-container center' style='display: none;'>
+                    <div class='six columns centered'>
+                        <div id='retry' class='center'>AGAIN!</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </body>
 </html>
+
+<!-- <div id="header">
+    <h1>Git Fight</h1>
+</div>
+
+<div id="account_names">
+    <p><h2>Jesse</h2> <h3>vs</h3> <h2><span>Richie</span></h2></p>
+
+</div>
+
+<div id="fight_button">
+    <p>Fight</p>
+
+</div> 
+    </div> -->

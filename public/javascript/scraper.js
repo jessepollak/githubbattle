@@ -1,8 +1,9 @@
-(function() {
-    var GITHUB = 'https://api.github.com/';
-    var IDENTITY = '?client_id=b64b63fabc4c7c64aa05&client_secret=b282829f3f3a149d56a48cc1ea3e0aad91e3ed29'
-    var JSONP = '&callback=?';
-    var USER = 'jessepollak'
+var GITHUB = 'https://api.github.com/';
+var IDENTITY = '?client_id=b64b63fabc4c7c64aa05&client_secret=b282829f3f3a149d56a48cc1ea3e0aad91e3ed29'
+var JSONP = '&callback=?';
+var USER = 'jessepollak'
+
+function getUserData(USER, results, user_def) {
     var forks = 0,
         stars = 0,
         subscribers = 0,
@@ -13,87 +14,75 @@
         repos = 0,
         orgs = 0,
         gists = 0;
+    var promises = [];
+    var defer = $.Deferred();
+    promises.push();
+    promises.push($.get(GITHUB + 'users/' + USER + IDENTITY + JSONP, function(data) {
+        data = data.data;
+        followers = data.followers;
+        createdAt = data.created_at;
+        userData = data;
+    }, 'jsonp'));
+    var promise_count = 0;
 
-    var user1 = {};
-    var p = 
-        $.Deferred(function (def) {
-            getUserData('jessepollak', user1,  def)
-        });
+    promises.push($.Deferred(function (def) {
+        $.get(GITHUB + 'users/' + USER + '/orgs' + IDENTITY+ '&per_page=100' + JSONP,
+            function(data) {
+                data = data.data;
+                orgs += data.length;
+                def.resolve();
+            },
+            'jsonp')
+        })
+    );
 
-    $.when(p).done(function() { console.log(user1); });
+    promises.push($.Deferred(function (def) {
+        $.get(GITHUB + 'users/' + USER + '/gists' + IDENTITY + '&per_page=100' + JSONP,
+            function(data) {
+                data = data.data;
+                gists += data.length;
+                def.resolve();
+            },
+            'jsonp')
+        })
+    );
 
-    function getUserData(USER, results, user_def) {
-        var promises = [];
-        var defer = $.Deferred();
-        promises.push();
-        promises.push($.get(GITHUB + 'users/' + USER + IDENTITY + JSONP, function(data) {
-            data = data.data;
-            followers = data.followers;
-            createdAt = data.created_at;
-            userData = data;
-        }, 'jsonp'));
-        var promise_count = 0;
-
-        promises.push($.Deferred(function (def) {
-            $.get(GITHUB + 'users/' + USER + '/orgs' + IDENTITY + JSONP,
+    promises.push(
+        $.Deferred(function (top_def) {
+            $.get(GITHUB + 'users/' + USER + '/repos' + IDENTITY + '&per_page=100' + JSONP, 
                 function(data) {
                     data = data.data;
-                    orgs += data.length;
-                    def.resolve();
-                },
-                'jsonp')
-            })
-        );
-
-        promises.push($.Deferred(function (def) {
-            $.get(GITHUB + 'users/' + USER + '/gists' + IDENTITY + JSONP,
-                function(data) {
-                    data = data.data;
-                    gists += data.length;
-                    def.resolve();
-                },
-                'jsonp')
-            })
-        );
-
-        promises.push(
-            $.Deferred(function (top_def) {
-                $.get(GITHUB + 'users/' + USER + '/repos' + IDENTITY + JSONP, 
-                    function(data) {
-                        data = data.data;
-                        repos += data.length;
-                        for(var i = 0; i < data.length; i++) {
-                            var e = data[i];
-                            if(!e.fork) {
-                                forks += e.forks;
-                            }
-                            stars += e.watchers;
-                            promises.push($.Deferred(function (def) {
-                                getCommitCount(GITHUB + 'repos/' + 
-                                USER + '/' + e.name + '/commits' + IDENTITY
-                                + '&per_page=100&author=' + USER + JSONP, def);
-                            }));
+                    repos += data.length;
+                    for(var i = 0; i < data.length; i++) {
+                        var e = data[i];
+                        if(!e.fork) {
+                            forks += e.forks;
                         }
+                        stars += e.watchers;
+                        promises.push($.Deferred(function (def) {
+                            getCommitCount(GITHUB + 'repos/' + 
+                            USER + '/' + e.name + '/commits' + IDENTITY
+                            + '&per_page=100&author=' + USER + JSONP, def);
+                        }));
+                    }
 
-                        
-                        top_def.resolve();
-                        $.when.apply(null, promises).done(function(args1, args2) {
-                            results.age = createdAt;
-                            results.followers = followers;
-                            results.forks = forks;
-                            results.stars = stars;
-                            results.commits = commits;
-                            results.repositories = repos;
-                            results.organizations = orgs;
-                            results.gists = gists;
-                            user_def.resolve();
-                        });
-                    }, 
-                    'jsonp');
-            })
-        );
-    }
-    
+                    
+                    top_def.resolve();
+                    $.when.apply(null, promises).done(function(args1, args2) {
+                        results.age = createdAt;
+                        results.followers = followers;
+                        results.forks = forks;
+                        results.stars = stars;
+                        results.commits = commits;
+                        results.repositories = repos;
+                        results.organizations = orgs;
+                        results.gists = gists;
+                        user_def.resolve();
+                    });
+                }, 
+                'jsonp');
+        })
+    );
 
     function getNumberCount(url, def) {
         var count = 0;
@@ -185,4 +174,4 @@
             nextLink: nextLink
         }
     }
-})();
+}
