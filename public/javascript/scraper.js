@@ -130,9 +130,8 @@
         $.get(
             url,
             function(resp, status, obj) {
-                commits += resp.length;
-                console.log(resp);
-                linkHeader = obj.getResponseHeader('Link');
+                commits += resp.data.length;
+                linkHeader = resp.meta.Link;
                 if(linkHeader) {
                     var next = hasNext(linkHeader);
                     if(next.hasNext) {
@@ -174,12 +173,11 @@
     function hasNext(linkHeader) {
         var next = false;
         var nextLink;
-        linkHeader.split(',').forEach(function(e) {
-            var linkParts = e.split(';');
-            var verb = linkParts[1].match(/rel=\"(.*)\"/)[1];
+        linkHeader.forEach(function(e) {
+            var verb = e[1].rel;
             if(verb == 'next') {
                 next = true;
-                nextLink = linkParts[0].match(/\<(.*)\>/)[1];
+                nextLink = e[0];
             }
         });
         return {
