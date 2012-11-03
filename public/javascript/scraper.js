@@ -69,7 +69,6 @@ function getUserData(USER, results, user_def) {
                     
                     top_def.resolve();
                     $.when.apply(null, promises).done(function(args1, args2) {
-                        console.log(commits);
                         results.age = createdAt;
                         results.followers = followers;
                         results.forks = forks;
@@ -120,6 +119,12 @@ function getUserData(USER, results, user_def) {
         $.get(
             url,
             function(resp, status, obj) {
+                if(resp.data.message && resp.data.message === "Git Repository is empty.") {
+                    def.resolve();
+                    return;
+                }
+                console.log(resp.data.length);
+                console.log(resp.data);
                 commits += resp.data.length;
                 linkHeader = resp.meta.Link;
                 if(linkHeader) {
