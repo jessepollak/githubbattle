@@ -92,7 +92,6 @@ function getUserData(USER, results, user_def) {
             async: false,
             success: function(resp, status, obj) {
                 linkHeader = obj.getResponseHeader('Link');
-                console.log(linkHeader);
                 if(linkHeader) {
                     var last = hasLast(linkHeader);
                     if(last.hasLast) {
@@ -123,8 +122,6 @@ function getUserData(USER, results, user_def) {
                     def.resolve();
                     return;
                 }
-                console.log(resp.data.length);
-                console.log(resp.data);
                 commits += resp.data.length;
                 linkHeader = resp.meta.Link;
                 if(linkHeader) {
