@@ -5,13 +5,13 @@ IDENTITY = '?client_id=ac46392bf2f66282bc31&client_secret=563c93bb3e0c4d2b2d677c
 GITHUB = 'https://api.github.com/';
 var Scraper = function() {  
     this.getUserData = function(USER, $el, user_def) {
-        // if (typeof Storage !== 'undefined' && localStorage[USER]) {
-        //     var user = JSON.parse(localStorage.getItem(USER));
-        //     if(((new Date()) - Date.parse(user.processed)) / 1000 < 60*60*24) {
-        //         user_def.resolve(user);
-        //         return;
-        //     }
-        // } 
+        if (typeof Storage !== 'undefined' && localStorage[USER]) {
+            var user = JSON.parse(localStorage.getItem(USER));
+            if(((new Date()) - Date.parse(user.processed)) / 1000 < 60*60*24) {
+                user_def.resolve(user);
+                return;
+            }
+        } 
 
         var forks = 0,
             stars = 0,
