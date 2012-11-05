@@ -23,7 +23,7 @@ var Scraper = function() {
             repos = 0,
             orgs = 0,
             gists = 0,
-            elChild = $el.find('h5');
+            elChild = $el.find('.columns');
         var promises = [];
         var defer = $.Deferred();
         promises.push();
@@ -70,8 +70,8 @@ var Scraper = function() {
                                 forks += e.forks;
                             }
                             stars += e.watchers;
-                            elChild.append('<span data-name="' + e.name + '">' 
-                                + e.name + '</span>');
+                            elChild.append('<h5 data-name="' + e.name + '">' 
+                                + e.name + '</h5>');
                             promises.push($.Deferred(function (def) {
                                 getCommitCount(GITHUB + 'repos/' + 
                                 USER + '/' + e.name + '/commits' + IDENTITY
@@ -144,13 +144,13 @@ var Scraper = function() {
                             getCommitCount(next.nextLink, name, def);
                         } else {
                             if(def && def.state() == 'pending') {
-                                elChild.find('span[data-name="' + name + '"]').remove();
+                                elChild.find('h5[data-name="' + name + '"]').remove();
                                 def.resolve();
                             }
                         }
                     }  else {
                         if(def && def.state() == 'pending') {
-                            elChild.find('span[data-name="' + name + '"]').remove();
+                            elChild.find('h5[data-name="' + name + '"]').remove();
                             def.resolve();
                         }
                     }

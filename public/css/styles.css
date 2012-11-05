@@ -96,16 +96,16 @@ input:focus {
     margin: 0px;
 }
 
+.processing-container {
+    margin-top: 10px;
+}
+
 .processing-container h5 {
     font-family: 'Titillium Web', sans-serif;
     color: white;
+    margin: 5px 7px 5px 0;
+    float: left;
 }
-
-.processing-container span {
-    margin-right: 10px;
-    margin-left: 0;
-}
-
 #submit div {
     font-size: 20px;
     line-height: 20px;

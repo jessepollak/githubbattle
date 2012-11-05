@@ -111,7 +111,7 @@ function setupGraph(u1, u2, name, saver, totals) {
     var graph = graphTemplate.clone();
     var r = dataFormatter(u1, u2, name, totals);
     saver[name] = r;
-    r = normalize(r);
+    r = normalize(r, name);
     graph.find('.label').text(formattedNames[name]);
     graph.find('.graph_1 h3').text(r.user1.actual);
     graph.find('.graph_2 h3').text(r.user2.actual);
@@ -123,6 +123,7 @@ function setupGraph(u1, u2, name, saver, totals) {
 function displayGraphs(form, graphs, interval) {
     clearInterval(interval);
     $(form).slideUp(500);
+    $('.processing-container').hide();
     var $graphsContainer = $('.graphs-container')
     $graphsContainer.show();
     countUp($('.result_1 h2'));
@@ -218,10 +219,11 @@ function reset() {
     $(document.forms[0]).show();
     $('.winner-container').hide();
     $('.retry-container .twitter').remove();
+    $('.processing-container').empty();
     users = [];
 }
 
-function normalize(r) {
+function normalize(r, name) {
     if(r.user1.percent < 10) {
         r.user1.percent = 15;
         r.user2.percent = 84;
@@ -231,8 +233,10 @@ function normalize(r) {
     } else if (r.user2.percent + r.user1.percent === 100) {
         r.user1.percent -= 1;
     }
-    if(r.user1.actual == 0) r.user1.actual = '~0';
-    if(r.user2.actual == 0) r.user2.actual = '~0';
+    if(name == 'commits' || name == 'stars' || name == 'forks') {
+        if(r.user1.actual == 0) r.user1.actual = '~0';
+        if(r.user2.actual == 0) r.user2.actual = '~0';
+    }
     return r;
 }
 
