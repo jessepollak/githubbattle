@@ -1,3 +1,5 @@
+
+
 var stats = ['age', 'stars', 'forks', 'commits', 'repositories', 'gists'], users = [];
 $(document).ready(function() {
     $('#submit').click(visualize);
@@ -11,12 +13,14 @@ $(document).ready(function() {
 });
 
 function visualize(e) {
+    var scraper = new Scraper();
     var $this = $(this);
     var $graphsContainer = $('.graphs-container');
     var form = document.forms[0],
         promises = [];
 
     var fail = false;
+    var storage = typeof(Storage)!=="undefined";
 
     users.push($(form['user_1']).val());
     users.push($(form['user_2']).val());
@@ -51,136 +55,128 @@ function visualize(e) {
             $this.unbind('click');
             $this.css('cursor', 'default');
 
-            var $fight = $('#submit');
-            results = [{}, {}];
-            $fight.html("<span>Loading...</span><div>(this will take awhile if you are a badass)</div>");
-            $fight.fadeOut(1000).fadeIn(1000);
-            var count = 0;
-            var interval = setInterval(function() {
-                count++;
-                $fight.fadeOut(1000).fadeIn(1000);
-                if(count === 5) {
-                    $fight.html("<span>Loading...</span><div>(you're thinking you're real cool right now.)</div>");
-                } else if(count == 10) {
-                    $fight.html("<span>Loading...</span><div>(alright, not bad)</div>");
-                } else if(count == 20) {
-                    $fight.html("<span>Loading...</span><div>(OK, you're a badass.)</div>");
-                } else if(count === 30) {
-                    $fight.html("<span>Loading...</span><div>(No one else has made it this far...)</div>");
-                } else if(count === 45) {
-                    $fight.html("<span>Loading...</span><div>(You've unlocked the secret of life!)</div>");
-                }
-            }, 1000);
-
+            var loadingInterval = loadingMessage();
             for(var i = 0; i < users.length; i++) {
                 promises.push(
                     $.Deferred(
                         function(def) {
-                            getUserData(users[i], results[i], def);
+                            scraper.getUserData(users[i], def);
                         }
                     )
                 );
             };
 
-            function setupGraphs() {
-                var saver = {};
-                var totals = {
-                    u1: 0,
-                    u2: 0
-                };
-                var graphs = [];
-                stats.forEach(function (s) {
-                    var g = setupGraph(s, saver, totals);
-                    graphs.push(g.hide());
-                });
-                
-                setupWinner(totals);
-                if (totals.u1 > totals.u2) {
-                    $('.winner-container h').text(users[0] + ' wins!');
-                } else {
-                    $('.winner-container h1').text(users[1] + ' wins!');
+            
+
+
+            $.when.apply(null, promises).done(function(u1, u2) {
+                if (typeof Storage !== 'undefined') {
+                    u1.processed = new Date();
+                    u2.processed = new Date();
+                    localStorage.setItem(users[0], JSON.stringify(u1));
+                    localStorage.setItem(users[1], JSON.stringify(u2));
                 }
-
-                displayGraphs(form, graphs, interval);
-            }
-
-            function setupGraph(name, saver, totals) {
-                var graph = graphTemplate.clone();
-                var r = dataFormatter(results[0], results[1], name, totals);
-                saver[name] = r;
-                r = normalize(r);
-                graph.find('.label').text(formattedNames[name]);
-                graph.find('.graph_1 h3').text(r.user1.actual);
-                graph.find('.graph_2 h3').text(r.user2.actual);
-                graph.find('.graph_1').css('width', r.user1.percent + '%');
-                graph.find('.graph_2').css('width', r.user2.percent + '%');
-                return graph;
-            }
-
-            function displayGraphs(form, graphs, interval) {
-                clearInterval(interval);
-                $(form).hide(function() {
-                    var $graphsContainer = $('.graphs-container')
-                    $graphsContainer.show();
-                    countUp($('.result_1 h2'));
-                    countUp($('.result_2 h2'));
-                    $('.winner-container').fadeIn(2000, function() {
-                        graphs.forEach(function(g) {
-                            $graphsContainer.append(g);
-                            g.slideDown(1000);
-                        });
-                        $('.retry-container').slideDown();
-                        $('.retry-container').click(reset);
-                    });
-                });
-            }
-
-            function countUp(el) {
-                var id = setInterval(numberCounter, 50);
-                var time = 0;
-                var number = parseFloat(el.data('total'));
-                function numberCounter() {
-                    position = time / 1500;
-                        if (time == 1500) {
-                            clearInterval(id);
-                        }
-                    el.text((position * number).toFixed(2));
-                    time += 50;
-                }
-            }
-
-            function setupWinner(totals) {
-                $('.result_1 h3').text(users[0]);
-                $('.result_2 h3').text(users[1]);
-                $('.result_1 h2').text(0);
-                $('.result_2 h2').text(0);
-                $('.result_1 h2').data('total', totals.u1.toFixed(2));
-                $('.result_2 h2').data('total', totals.u2.toFixed(2));
-                var twitter;
-                if(totals.u2 > totals.u1) {
-                    $('.result_1 h3, .result_1 h2').css('font-weight', 'normal');
-                    $('.result_2 h3, .result_2 h2').css({
-                        'color': 'rgb(250, 195, 0)'
-                    });
-                    twitter = twitterTemplate(users[1], users[0]);
-                } else {
-                    $('.result_2 h3, .result_2 h2').css({
-                        'font-weight': 'normal',
-                    });
-                    $('.result_1 h3, .result_1 h2').css({
-                        'color': 'rgb(250, 195, 0)'
-                    });
-                    twitter = twitterTemplate(users[0], users[1]);
-                }
-                $('.retry-container').prepend(twitter);
-                twttr.widgets.load();
-            }
-
-
-            $.when.apply(null, promises).done(setupGraphs);
+                setupGraphs(u1, u2, loadingInterval);
+            });
         }
     });
     
+}
+
+function setupGraphs(u1, u2, interval) {
+    var saver = {},
+        totals = {
+            u1: 0,
+            u2: 0
+        },
+        $form = $(document.forms[0]),
+        graphs = [];
+
+    stats.forEach(function (s) {
+        var g = setupGraph(u1, u2, s, saver, totals);
+        graphs.push(g.hide());
+    });
+    
+    setupWinner(totals);
+    if (totals.u1 > totals.u2) {
+        $('.winner-container h').text(users[0] + ' wins!');
+    } else {
+        $('.winner-container h1').text(users[1] + ' wins!');
+    }
+
+    displayGraphs($form, graphs, interval);
+}
+
+function setupGraph(u1, u2, name, saver, totals) {
+    var graph = graphTemplate.clone();
+    var r = dataFormatter(u1, u2, name, totals);
+    saver[name] = r;
+    r = normalize(r);
+    graph.find('.label').text(formattedNames[name]);
+    graph.find('.graph_1 h3').text(r.user1.actual);
+    graph.find('.graph_2 h3').text(r.user2.actual);
+    graph.find('.graph_1').css('width', r.user1.percent + '%');
+    graph.find('.graph_2').css('width', r.user2.percent + '%');
+    return graph;
+}
+
+function displayGraphs(form, graphs, interval) {
+    clearInterval(interval);
+    $(form).slideUp(500);
+    var $graphsContainer = $('.graphs-container')
+    $graphsContainer.show();
+    countUp($('.result_1 h2'));
+    countUp($('.result_2 h2'));
+    $('.winner-container').slideDown(2000, function() {
+        graphs.forEach(function(g) {
+            $graphsContainer.append(g);
+            g.slideDown(1000);
+        });
+        $('.retry-container').slideDown();
+        $('.retry-container').click(reset);
+        $(window).scrollTop($('.winner-container').offset().top);
+    });
+}
+
+function countUp(el) {
+    var id = setInterval(numberCounter, 50);
+    var time = 0;
+    var number = parseFloat(el.data('total'));
+    function numberCounter() {
+        position = time / 1500;
+            if (time == 1500) {
+                clearInterval(id);
+            }
+        el.text((position * number).toFixed(2));
+        time += 50;
+    }
+}
+
+function setupWinner(totals) {
+    $('.result_1 h3').text(users[0]);
+    $('.result_2 h3').text(users[1]);
+    $('.result_1 h2').text(0);
+    $('.result_2 h2').text(0);
+    $('.result_1 h2').data('total', totals.u1.toFixed(2));
+    $('.result_2 h2').data('total', totals.u2.toFixed(2));
+    var twitter;
+    if(totals.u2 > totals.u1) {
+        $('.result_1 h3, .result_1 h2').css('font-weight', 'normal');
+        $('.result_2 h3, .result_2 h2').css({
+            'color': 'rgb(250, 195, 0)'
+        });
+        twitter = twitterTemplate(users[1], users[0]);
+    } else {
+        $('.result_2 h3, .result_2 h2').css({
+            'font-weight': 'normal',
+        });
+        $('.result_1 h3, .result_1 h2').css({
+            'color': 'rgb(250, 195, 0)'
+        });
+        twitter = twitterTemplate(users[0], users[1]);
+    }
+    $('.retry-container').prepend(twitter);
+    twttr.widgets.load();
 }
 
 var graphTemplate = $("<div class='graph-container'> \
@@ -350,5 +346,28 @@ function dataFormatter(user1, user2, stat, totals) {
             }
         }
     }
+}
+
+function loadingMessage() {
+    var $fight = $('#submit'),
+        count = 0;
+    $fight.html("<span>Loading...</span><div>(this will take awhile if you are a badass)</div>");
+    $fight.fadeTo(1000, 0).fadeTo(1000, 1);
+    var interval = setInterval(function() {
+        count++;
+        $fight.fadeTo(1000, 0).fadeTo(1000, 1);
+        if(count === 5) {
+            $fight.html("<span>Loading...</span><div>(you're thinking you're real cool right now.)</div>");
+        } else if(count == 10) {
+            $fight.html("<span>Loading...</span><div>(alright, not bad)</div>");
+        } else if(count == 20) {
+            $fight.html("<span>Loading...</span><div>(OK, you're a badass.)</div>");
+        } else if(count === 30) {
+            $fight.html("<span>Loading...</span><div>(No one else has made it this far...)</div>");
+        } else if(count === 45) {
+            $fight.html("<span>Loading...</span><div>(You've unlocked the secret of life!)</div>");
+        }
+    }, 2000);
+    return interval;
 }
 

@@ -24,7 +24,21 @@ div {
     font-style: italic;
     color: white;
     font-size: 140px;
+    margin-bottom: -20px;
 }
+
+#title h3 {
+    margin-top: 0;
+    font-family: 'Titillium Web', sans-serif;
+    color: rgb(186, 0,0);
+}
+
+#title h5 {
+    margin-top: -10px;
+    font-family: 'Titillium Web', sans-serif;
+    color: white;
+}
+
 .user input {
     height: 100px;
     font-size: 50px;
@@ -141,7 +155,6 @@ input:focus {
     line-height: 60px;
 }
 
-
 .score h2 {
     font-family: 'Titillium Web', sans-serif;
     color: white;
@@ -150,14 +163,20 @@ input:focus {
     clear: both;
 }
 
-.twitter h5 {
-    font-family: 'Titillium Web', sans-serif;
-    color: white;
+.twitter {
+    margin-top: 40px;
+    margin-bottom: 20px;
 }
 
-.twitter {
-    margin-top: 80px;
-    margin-bottom: 20px;
+.twitter h5 {
+    color: white;
+    font-family: 'Titillium Web', sans-serif;
+    display: inline;
+    position: relative;
+    bottom: 5px;
+}
+.twitter iframe {
+    display: inline;
 }
 
 #retry {
@@ -170,4 +189,8 @@ input:focus {
     color: white;
     font-weight: bold;
     cursor: pointer;
+}
+
+.winner-container {
+    margin-top: -50px!important;
 }
