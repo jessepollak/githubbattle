@@ -63,20 +63,22 @@ var Scraper = function() {
                 $.get(GITHUB + 'users/' + USER + '/repos' + IDENTITY + '&per_page=100', 
                     function(data) {
                         data = data.data;
-                        repos += data.length;
                         for(var i = 0; i < data.length; i++) {
                             var e = data[i];
-                            if(!e.fork) {
-                                forks += e.forks;
+                            if(e.size > 0) {
+                                repos++;
+                                if(!e.fork) {
+                                    forks += e.forks;
+                                }
+                                stars += e.watchers;
+                                elChild.append('<h5 data-name="' + e.name + '">' 
+                                    + e.name + '</h5>');
+                                promises.push($.Deferred(function (def) {
+                                    getCommitCount(GITHUB + 'repos/' + 
+                                    USER + '/' + e.name + '/commits' + IDENTITY
+                                    + '&per_page=100&author=' + USER, e.name, def);
+                                }));
                             }
-                            stars += e.watchers;
-                            elChild.append('<h5 data-name="' + e.name + '">' 
-                                + e.name + '</h5>');
-                            promises.push($.Deferred(function (def) {
-                                getCommitCount(GITHUB + 'repos/' + 
-                                USER + '/' + e.name + '/commits' + IDENTITY
-                                + '&per_page=100&author=' + USER, e.name, def);
-                            }));
                         }
 
                         

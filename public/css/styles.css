@@ -97,14 +97,19 @@ input:focus {
 }
 
 .processing-container {
-    margin-top: 10px;
+    margin-top: 30px!important;
 }
 
 .processing-container h5 {
     font-family: 'Titillium Web', sans-serif;
-    color: white;
+    color: rgb(186, 0,0);
     margin: 5px 7px 5px 0;
+    padding: 5px 7px;
+    background: white;
     float: left;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
 }
 #submit div {
     font-size: 20px;

@@ -237,8 +237,8 @@ function normalize(r, name) {
         if(r.user1.actual == 0) r.user1.actual = '~0';
         if(r.user2.actual == 0) r.user2.actual = '~0';
     }
-    if(r.user1.actual > 100) r.user1.actual = '100+';
-    if(r.user2.actual > 100) r.user2.actual = '100+';
+    if(r.user1.actual > 100 && name !== 'age') r.user1.actual = '100+';
+    if(r.user2.actual > 100 && name !== 'age') r.user2.actual = '100+';
     return r;
 }
 
