@@ -10,7 +10,8 @@ $(document).ready(function() {
 });
 
 function handleEnter(e) {
-    if (event.which == 13) {
+    var code = e.keyCode || e.which;
+    if (code == 13) {
         event.preventDefault();
         visualize();
     }
