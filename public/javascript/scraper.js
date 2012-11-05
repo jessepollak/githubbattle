@@ -2,13 +2,13 @@ GITHUB = 'https://api.github.com/';
 IDENTITY = '?client_id=b64b63fabc4c7c64aa05&client_secret=b282829f3f3a149d56a48cc1ea3e0aad91e3ed29'
 var Scraper = function() {  
     this.getUserData = function(USER, $el, user_def) {
-        // if (typeof Storage !== 'undefined' && localStorage[USER]) {
-        //     var user = JSON.parse(localStorage.getItem(USER));
-        //     if(((new Date()) - Date.parse(user.processed)) / 1000 < 60*60*24) {
-        //         user_def.resolve(user);
-        //         return;
-        //     }
-        // } 
+        if (typeof Storage !== 'undefined' && localStorage[USER]) {
+            var user = JSON.parse(localStorage.getItem(USER));
+            if(((new Date()) - Date.parse(user.processed)) / 1000 < 60*60*24) {
+                user_def.resolve(user);
+                return;
+            }
+        } 
 
         var forks = 0,
             stars = 0,
