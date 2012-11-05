@@ -237,7 +237,7 @@ function normalize(r, name) {
         if(r.user1.actual == 0) r.user1.actual = '~0';
         if(r.user2.actual == 0) r.user2.actual = '~0';
     }
-    if(name === 'repositories' || nae === 'gists') {
+    if(name === 'repositories' || name === 'gists') {
         if(r.user1.actual > 100) r.user1.actual = '100+';
         if(r.user2.actual > 100) r.user2.actual = '100+';
     }
