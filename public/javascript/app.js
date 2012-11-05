@@ -112,12 +112,6 @@ function setupGraphs(u1, u2, interval) {
     });
     
     setupWinner(u1, u2);
-    if (totals.u1 > totals.u2) {
-        $('.winner-container h').text(users[0] + ' wins!');
-    } else {
-        $('.winner-container h1').text(users[1] + ' wins!');
-    }
-
     displayGraphs($form, graphs, interval);
 }
 
@@ -167,8 +161,10 @@ function countUp(el) {
 }
 
 function setupWinner(u1, u2) {
+    console.log(u1, u2);
     var u1Score = finalScore(u1),
         u2Score = finalScore(u2);
+    console.log(u1Score, u2Score)
     $('.result_1 h3').text(users[0]);
     $('.result_2 h3').text(users[1]);
     $('.result_1 h2').text(0);
@@ -176,20 +172,21 @@ function setupWinner(u1, u2) {
     $('.result_1 h2').data('total', u1Score);
     $('.result_2 h2').data('total', u2Score);
     var twitter;
-    if(u2Score > u1Score) {
-        $('.result_1 h3, .result_1 h2').css('font-weight', 'normal');
+    if(parseInt(u1Score) > parseInt(u2Score)) {
+        console.log('test');
         $('.result_2 h3, .result_2 h2').css({
-            'color': 'rgb(250, 195, 0)'
-        });
-        twitter = twitterTemplate(users[1], users[0], u2Score, u1Score);
-    } else {
-        $('.result_2 h3, .result_2 h2').css({
-            'font-weight': 'normal',
+            'font-weight': 'normal'
         });
         $('.result_1 h3, .result_1 h2').css({
             'color': 'rgb(250, 195, 0)'
         });
         twitter = twitterTemplate(users[0], users[1], u1Score, u2Score);
+    } else {
+        $('.result_1 h3, .result_1 h2').css('font-weight', 'normal');
+        $('.result_2 h3, .result_2 h2').css({
+            'color': 'rgb(250, 195, 0)'
+        });
+        twitter = twitterTemplate(users[1], users[0], u2Score, u1Score);
     }
     $('.retry-container').prepend(twitter);
     twttr.widgets.load();
