@@ -425,7 +425,7 @@ function finalScore(user) {
 
     // find raw commits per day score (36)
     if (diff_time > 0) {
-        var raw_score_cpd = Math.sqrt((commits / (diff_time / 86400))) / 6;
+        var raw_score_cpd = Math.sqrt((commits / (diff_time / 86400))) / 5.75;
         if (raw_score_cpd > 1) {
             raw_score_cpd = 1;
         }
@@ -445,7 +445,7 @@ function finalScore(user) {
 
     // find raw stars per repo (1024)
     if (repos > 0) {
-        var raw_score_spr = Math.sqrt(stars / repos) / 32;
+        var raw_score_spr = Math.sqrt(stars / repos) / 31;
         if(raw_score_spr > 1) {
             raw_score_spr = 1;
         }
