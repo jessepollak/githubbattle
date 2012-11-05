@@ -176,7 +176,7 @@ function setupWinner(u1, u2) {
     $('.result_1 h2').data('total', u1Score);
     $('.result_2 h2').data('total', u2Score);
     var twitter;
-    if(u1Score > u2Score) {
+    if(u2Score > u1Score) {
         $('.result_1 h3, .result_1 h2').css('font-weight', 'normal');
         $('.result_2 h3, .result_2 h2').css({
             'color': 'rgb(250, 195, 0)'
