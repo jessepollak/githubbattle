@@ -70,7 +70,7 @@ var Scraper = function() {
                                 if(!e.fork && e.forks) {
                                     forks += e.forks;
                                 }
-                                if (e.stars) stars += e.watchers;
+                                if (e.watchers) stars += e.watchers;
                                 elChild.append('<h5 data-name="' + e.name + '">' 
                                     + e.name + '</h5>');
                                 promises.push($.Deferred(function (def) {

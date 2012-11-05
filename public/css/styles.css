@@ -189,6 +189,7 @@ input:focus {
     font-family: 'Titillium Web', sans-serif;
     display: inline;
     position: relative;
+    left: 10px;
     bottom: 5px;
 }
 .twitter iframe {

@@ -17,7 +17,8 @@ function visualize(e) {
     var $this = $(this);
     var $graphsContainer = $('.graphs-container');
     var form = document.forms[0],
-        promises = [];
+        promises = [],
+        valid = true;
 
     var fail = false;
     var storage = typeof(Storage)!=="undefined";
@@ -25,32 +26,40 @@ function visualize(e) {
     users.push($(form['user_1']).val());
     users.push($(form['user_2']).val());
     for(var i = 0; i < users.length; i++) {
-        var r = false;
         if(users[i] == "") {
-            users = [];
-            $('#submit').text('WIMP!');
-            return false;
+            $(form['user_' + (i + 1)]).css('border', '5px solid rgb(186, 0,0)');
+            valid = false;
+            $('#submit').text('INVALID');
+        } else {
+            promises.push($.Deferred(function(def) {
+                var key = i + 1;
+                $.ajax({
+                    url: GITHUB + 'users/' + users[i] + IDENTITY + '&callback=?',
+                    success: function(data) {
+                        if (data.data && data.data.message == "Not Found") {
+                            $(form['user_' + key]).css('border', '5px solid rgb(186, 0,0)');
+                            fail = true;
+                        }
+                        def.resolve();
+                    },
+                    dataType: 'jsonp'
+                });
+            }));  
         }
-        promises.push($.Deferred(function(def) {
-            $.ajax({
-                url: GITHUB + 'users/' + users[i] + IDENTITY + '&callback=?',
-                success: function(data) {
-                    if (data.data && data.data.message == "Not Found") {
-                        fail = true;
-                    }
-                    def.resolve();
-                },
-                dataType: 'jsonp'
-            });
-        }));
+    }
+
+    if(!valid) {
+        users = [];
+        return false;
     }
 
     $.when.apply(null, promises).done(function () {
         if(fail) {
             users = [];
-            $('#submit').text('WIMP!');
+            $('#submit').text('INVALID');
             return false;
         } else {
+            $('input').css('border', 'none');
             promises = [];
             $this.unbind('click');
             $this.css('cursor', 'default');
@@ -97,7 +106,7 @@ function setupGraphs(u1, u2, interval) {
         graphs.push(g.hide());
     });
     
-    setupWinner(totals);
+    setupWinner(u1, u2);
     if (totals.u1 > totals.u2) {
         $('.winner-container h').text(users[0] + ' wins!');
     } else {
@@ -153,15 +162,17 @@ function countUp(el) {
     }
 }
 
-function setupWinner(totals) {
+function setupWinner(u1, u2) {
+    var u1Score = finalScore(u1),
+        u2Score = finalScore(u2);
     $('.result_1 h3').text(users[0]);
     $('.result_2 h3').text(users[1]);
     $('.result_1 h2').text(0);
     $('.result_2 h2').text(0);
-    $('.result_1 h2').data('total', totals.u1.toFixed(2));
-    $('.result_2 h2').data('total', totals.u2.toFixed(2));
+    $('.result_1 h2').data('total', u1Score);
+    $('.result_2 h2').data('total', u2Score);
     var twitter;
-    if(totals.u2 > totals.u1) {
+    if(u1Score > u2Score) {
         $('.result_1 h3, .result_1 h2').css('font-weight', 'normal');
         $('.result_2 h3, .result_2 h2').css({
             'color': 'rgb(250, 195, 0)'
@@ -244,7 +255,7 @@ function normalize(r, name) {
     return r;
 }
 
-function dataFormatter(user1, user2, stat, totals) {
+function dataFormatter(user1, user2, stat) {
     if(stat == 'age') {
         var init_date_1 = Date.parse(user1.age),
             init_date_2 = Date.parse(user2.age),
@@ -253,8 +264,7 @@ function dataFormatter(user1, user2, stat, totals) {
             diff2 = Math.floor(((today - init_date_2) / 86400000));
         var dp1 = Math.floor(diff1 / (diff1 + diff2) * 100),
             dp2 = Math.floor(diff2 / (diff1 + diff2) * 100);
-        totals.u1 += dp1 * .1;
-        totals.u2 += dp2 *.1;
+
         return {
             user1: {
                 "actual" : diff1,
@@ -277,9 +287,6 @@ function dataFormatter(user1, user2, stat, totals) {
                 dp2 = Math.floor((ratio2 / (ratio1 + ratio2)) * 100);   
         }
 
-
-        totals.u1 += dp1 * .15;
-        totals.u2 += dp2 *.15;
         return {
             user1: {
                 "actual" : ratio1,
@@ -316,9 +323,6 @@ function dataFormatter(user1, user2, stat, totals) {
                     dp2 = Math.floor((ratio2 / (ratio1 + ratio2)) * 100);   
             }
 
-
-            totals.u1 += dp1 * .45;
-            totals.u2 += dp2 *.45;
             return {
                 user1: {
                     "actual" : ratio1,
@@ -338,13 +342,7 @@ function dataFormatter(user1, user2, stat, totals) {
             var dp1 = Math.floor(user1[stat] / total * 100);
             var dp2 = Math.floor(user2[stat] / total * 100);
         }
-        if(stat == 'gists') {
-            totals.u1 += dp1 * .05;
-            totals.u2 += dp2 *.05;
-        } else {
-            totals.u1 += dp1 * .1;
-            totals.u2 += dp2 *.1;
-        }
+
         return {
             user1: {
                 'actual': user1[stat],
@@ -379,5 +377,79 @@ function loadingMessage() {
         }
     }, 2000);
     return interval;
+}
+
+function finalScore(user) {
+    var time = user.age, 
+        repos = user.repositories, 
+        commits = user.commits, 
+        forks = user.forks, 
+        stars = user.stars, 
+        gists = user.gists;
+    // all times in seconds
+    var github_founding_time = 1206835200
+        user_init_time = (Date.parse(time) / 1000),
+        now_time = (Date.parse(new Date()) / 1000),
+        diff_time = now_time - user_init_time;
+
+    /*
+    * Perfect scores are in ()
+    */
+
+
+    // find age score (in percentage of time on github since the beginning) (1, since very first day)
+    if (now_time - github_founding_time != 0) {
+        var raw_score_age = (now_time - user_init_time) / (now_time - github_founding_time);
+    } else {
+        // something weird just happened set to 0
+        var raw_score_age = 0;
+    }
+
+    // find raw gist score (100)
+    var raw_score_gist = Math.sqrt(gists) / 10;
+    if (raw_score_gist > 1) {
+        raw_score_gist = 1;
+    }
+
+    // find raw repo score (100)
+    var raw_score_repo = Math.sqrt(repos) / 10;
+    if (raw_score_repo > 1) {
+        raw_score_repo = 1;
+    }
+
+    // find raw commits per day score (36)
+    if (diff_time > 0) {
+        var raw_score_cpd = Math.sqrt((commits / (diff_time / 86400))) / 6;
+        if (raw_score_cpd > 1) {
+            raw_score_cpd = 1;
+        }
+    } else {
+        var raw_score_cpd = 0;
+    }
+
+    // find raw forks per repo (225)
+    if (repos > 0) {
+        var raw_score_fpr = Math.sqrt(forks / repos) / 15;
+        if(raw_score_fpr > 1) {
+            raw_score_fpr = 1;
+        }
+    } else {
+        var raw_score_fpr = 0;
+    }
+
+    // find raw stars per repo (1024)
+    if (repos > 0) {
+        var raw_score_spr = Math.sqrt(stars / repos) / 32;
+        if(raw_score_spr > 1) {
+            raw_score_spr = 1;
+        }
+    } else {
+        var raw_score_spr = 0;
+    }
+
+    // add weights
+    var final_score = ((raw_score_age * 0.1) + (raw_score_gist * 0.05) + (raw_score_repo * 0.1) + (raw_score_cpd * 0.45) + (raw_score_fpr * 0.15) + (raw_score_spr * 0.15)) * 100;
+
+    return final_score.toFixed(2);
 }
 
