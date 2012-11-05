@@ -177,7 +177,7 @@ function setupWinner(u1, u2) {
         $('.result_2 h3, .result_2 h2').css({
             'color': 'rgb(250, 195, 0)'
         });
-        twitter = twitterTemplate(users[1], users[0]);
+        twitter = twitterTemplate(users[1], users[0], u2Score, u1Score);
     } else {
         $('.result_2 h3, .result_2 h2').css({
             'font-weight': 'normal',
@@ -185,7 +185,7 @@ function setupWinner(u1, u2) {
         $('.result_1 h3, .result_1 h2').css({
             'color': 'rgb(250, 195, 0)'
         });
-        twitter = twitterTemplate(users[0], users[1]);
+        twitter = twitterTemplate(users[0], users[1], u1Score, u2Score);
     }
     $('.retry-container').prepend(twitter);
     twttr.widgets.load();
@@ -201,11 +201,12 @@ var graphTemplate = $("<div class='graph-container'> \
                         </div> \
                     </div>");
 
-function twitterTemplate(w, l)  {
+function twitterTemplate(w, l, wScore, lScore)  {
     return $("<div class='twitter'> \
                             <a href='https://twitter.com/share' \
-                             data-text='" + w +" just beat " + l + " on GitBattle. Battle now to see if you can beat either of them!'\
-                             class='twitter-share-button' data-lang='en' data-url='http://gitbattle.com' data-size='medium' data-count='vertical'>Tweet</a> \
+                             data-text='" + w +" just beat " + l + " on GitBattle " + 
+                             wScore + " to " + lScore + ". Battle now to see if you can beat either of them:'\
+                             class='twitter-share-button' data-lang='en' data-url='http://www.gitbattle.com' data-size='medium' data-count='vertical'>Tweet</a> \
                         <h5>about your victory (or loss)</h5> \
                         </div>");
 } 
