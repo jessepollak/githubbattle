@@ -82,7 +82,7 @@ input:focus {
     padding: 20px 20px;
     background: rgb(250, 195, 0);
     line-height: 100px;
-    font-size: 80px;
+    font-size: 70px;
     color: white;
     font-weight: bold;
     cursor: pointer;
@@ -94,6 +94,18 @@ input:focus {
     font-size: 60px;
     color: white;
     margin: 0px;
+}
+
+.processing-container h5 {
+    font-family: 'Titillium Web', sans-serif;
+    color: white;
+}
+
+
+
+.processing-container span {
+    margin-right: 10px;
+    margin-left: 0;
 }
 
 #submit div {

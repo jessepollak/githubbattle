@@ -60,7 +60,7 @@ function visualize(e) {
                 promises.push(
                     $.Deferred(
                         function(def) {
-                            scraper.getUserData(users[i], def);
+                            scraper.getUserData(users[i], $('.processing-container'), def);
                         }
                     )
                 );
@@ -231,6 +231,8 @@ function normalize(r) {
     } else if (r.user2.percent + r.user1.percent === 100) {
         r.user1.percent -= 1;
     }
+    if(r.user1.actual == 0) r.user1.actual = '~0';
+    if(r.user2.actual == 0) r.user2.actual = '~0';
     return r;
 }
 
@@ -351,21 +353,21 @@ function dataFormatter(user1, user2, stat, totals) {
 function loadingMessage() {
     var $fight = $('#submit'),
         count = 0;
-    $fight.html("<span>Loading...</span><div>(this will take awhile if you are a badass)</div>");
+    $fight.html("<span>Processing...</span><div>(this will take awhile if you are a badass)</div>");
     $fight.fadeTo(1000, 0).fadeTo(1000, 1);
     var interval = setInterval(function() {
         count++;
         $fight.fadeTo(1000, 0).fadeTo(1000, 1);
         if(count === 5) {
-            $fight.html("<span>Loading...</span><div>(you're thinking you're real cool right now.)</div>");
+            $fight.html("<span>Processing...</span><div>(you're thinking you're real cool right now.)</div>");
         } else if(count == 10) {
-            $fight.html("<span>Loading...</span><div>(alright, not bad)</div>");
+            $fight.html("<span>Processing...</span><div>(alright, not bad)</div>");
         } else if(count == 20) {
-            $fight.html("<span>Loading...</span><div>(OK, you're a badass.)</div>");
+            $fight.html("<span>Processing...</span><div>(OK, you're a badass.)</div>");
         } else if(count === 30) {
-            $fight.html("<span>Loading...</span><div>(No one else has made it this far...)</div>");
+            $fight.html("<span>Processing...</span><div>(No one else has made it this far...)</div>");
         } else if(count === 45) {
-            $fight.html("<span>Loading...</span><div>(You've unlocked the secret of life!)</div>");
+            $fight.html("<span>Processing...</span><div>(You've unlocked the secret of life!)</div>");
         }
     }, 2000);
     return interval;

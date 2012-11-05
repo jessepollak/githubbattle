@@ -1,14 +1,14 @@
 GITHUB = 'https://api.github.com/';
 IDENTITY = '?client_id=b64b63fabc4c7c64aa05&client_secret=b282829f3f3a149d56a48cc1ea3e0aad91e3ed29'
 var Scraper = function() {  
-    this.getUserData = function(USER, user_def) {
-        if (typeof Storage !== 'undefined' && localStorage[USER]) {
-            var user = JSON.parse(localStorage.getItem(USER));
-            if(((new Date()) - Date.parse(user.processed)) / 1000 < 60*60*24) {
-                user_def.resolve(user);
-                return;
-            }
-        } 
+    this.getUserData = function(USER, $el, user_def) {
+        // if (typeof Storage !== 'undefined' && localStorage[USER]) {
+        //     var user = JSON.parse(localStorage.getItem(USER));
+        //     if(((new Date()) - Date.parse(user.processed)) / 1000 < 60*60*24) {
+        //         user_def.resolve(user);
+        //         return;
+        //     }
+        // } 
 
         var forks = 0,
             stars = 0,
@@ -19,7 +19,8 @@ var Scraper = function() {
             commits = 0,
             repos = 0,
             orgs = 0,
-            gists = 0;
+            gists = 0,
+            elChild = $el.find('h5');
         var promises = [];
         var defer = $.Deferred();
         promises.push();
@@ -53,6 +54,7 @@ var Scraper = function() {
             })
         );
 
+        $el.show();
         promises.push(
             $.Deferred(function (top_def) {
                 $.get(GITHUB + 'users/' + USER + '/repos' + IDENTITY + '&per_page=100', 
@@ -65,10 +67,11 @@ var Scraper = function() {
                                 forks += e.forks;
                             }
                             stars += e.watchers;
+                            elChild.append('<span data-name="' + e.name + '">' + e.name + '</span>');
                             promises.push($.Deferred(function (def) {
                                 getCommitCount(GITHUB + 'repos/' + 
                                 USER + '/' + e.name + '/commits' + IDENTITY
-                                + '&per_page=100&author=' + USER, def);
+                                + '&per_page=100&author=' + USER, e.name, def);
                             }));
                         }
 
@@ -121,7 +124,7 @@ var Scraper = function() {
             return count;
         }
 
-        function getCommitCount(url, def) {
+        function getCommitCount(url, name, def) {
             $.get(
                 url,
                 function(resp, status, obj) {
@@ -134,14 +137,16 @@ var Scraper = function() {
                     if(linkHeader) {
                         var next = hasNext(linkHeader);
                         if(next.hasNext) {
-                            getCommitCount(next.nextLink, def);
+                            getCommitCount(next.nextLink, name, def);
                         } else {
                             if(def && def.state() == 'pending') {
+                                elChild.find('span[data-name="' + name + '"]').remove();
                                 def.resolve();
                             }
                         }
                     }  else {
                         if(def && def.state() == 'pending') {
+                            elChild.find('span[data-name="' + name + '"]').remove();
                             def.resolve();
                         }
                     }
