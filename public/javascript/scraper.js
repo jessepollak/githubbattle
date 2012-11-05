@@ -1,5 +1,8 @@
+//Yes, I do understand that I am exposing private credentials. They are not linked
+// to a real account and can be deactivated at any time; therefore, I ask that
+// you don't try and abuse them. Thanks!
+IDENTITY = '?client_id=ac46392bf2f66282bc31&client_secret=563c93bb3e0c4d2b2d677c9acedf33a6f97bcd00'
 GITHUB = 'https://api.github.com/';
-IDENTITY = '?client_id=b64b63fabc4c7c64aa05&client_secret=b282829f3f3a149d56a48cc1ea3e0aad91e3ed29'
 var Scraper = function() {  
     this.getUserData = function(USER, $el, user_def) {
         if (typeof Storage !== 'undefined' && localStorage[USER]) {
@@ -67,7 +70,8 @@ var Scraper = function() {
                                 forks += e.forks;
                             }
                             stars += e.watchers;
-                            elChild.append('<span data-name="' + e.name + '">' + e.name + '</span>');
+                            elChild.append('<span data-name="' + e.name + '">' 
+                                + e.name + '</span>');
                             promises.push($.Deferred(function (def) {
                                 getCommitCount(GITHUB + 'repos/' + 
                                 USER + '/' + e.name + '/commits' + IDENTITY
