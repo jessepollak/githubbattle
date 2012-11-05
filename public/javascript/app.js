@@ -161,10 +161,8 @@ function countUp(el) {
 }
 
 function setupWinner(u1, u2) {
-    console.log(u1, u2);
     var u1Score = finalScore(u1),
         u2Score = finalScore(u2);
-    console.log(u1Score, u2Score)
     $('.result_1 h3').text(users[0]);
     $('.result_2 h3').text(users[1]);
     $('.result_1 h2').text(0);
@@ -173,7 +171,6 @@ function setupWinner(u1, u2) {
     $('.result_2 h2').data('total', u2Score);
     var twitter;
     if(parseInt(u1Score) > parseInt(u2Score)) {
-        console.log('test');
         $('.result_2 h3, .result_2 h2').css({
             'font-weight': 'normal'
         });
