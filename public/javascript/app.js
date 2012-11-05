@@ -4,13 +4,17 @@ var stats = ['age', 'stars', 'forks', 'commits', 'repositories', 'gists'], users
 $(document).ready(function() {
     $('#submit').click(visualize);
 
-    $('.user2 input, .user1 input').keypress(function(event) {
-        if (event.which == 13) {
-            event.preventDefault();
-            visualize();
-        }
-    });
+    $('.user2 input, .user1 input').keypress(handleEnter);
+
+    $('.retry-container').click(reset);
 });
+
+function handleEnter(e) {
+    if (event.which == 13) {
+        event.preventDefault();
+        visualize();
+    }
+}
 
 function visualize(e) {
     var scraper = new Scraper();
@@ -61,7 +65,8 @@ function visualize(e) {
         } else {
             $('input').css('border', 'none');
             promises = [];
-            $this.unbind('click');
+            $('#submit').unbind('click');
+            $('.user2 input, .user1 input').unbind('keypress');
             $this.css('cursor', 'default');
 
             var loadingInterval = loadingMessage();
@@ -143,7 +148,6 @@ function displayGraphs(form, graphs, interval) {
             g.slideDown(1000);
         });
         $('.retry-container').slideDown();
-        $('.retry-container').click(reset);
         $(window).scrollTop($('.winner-container').offset().top);
     });
 }
@@ -226,6 +230,7 @@ function reset() {
     $('.retry-container').hide();
     $('#submit').text('BATTLE');
     $('#submit').click(visualize);
+    $('.user2 input, .user1 input').keypress(handleEnter);
     $('.user1 input').val('');
     $('.user2 input').val('');
     $(document.forms[0]).show();
