@@ -4,6 +4,9 @@ var stats = ['age', 'stars', 'forks', 'commits', 'repositories', 'gists'], users
 $(document).ready(function() {
     $('#submit').click(visualize);
 
+    $('.user2 input, .user1 input').focus(function() {
+        $(this).val('').unbind('focus');
+    })
     $('.user2 input, .user1 input').keypress(handleEnter);
 
     $('.retry-container').click(reset);
