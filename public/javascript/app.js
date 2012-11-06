@@ -192,7 +192,7 @@ function setupWinner(u1, u2) {
         $('.result_2 h3, .result_2 h2').addClass('winner');
         twitter = twitterTemplate(users[1], users[0], u2Score, u1Score);
     }
-    if(twttr) {
+    if(typeof twttr !== 'undefined') {
         $('.retry-container').prepend(twitter);
         twttr.widgets.load();
     }
@@ -213,7 +213,7 @@ function twitterTemplate(w, l, wScore, lScore)  {
                             <a href='https://twitter.com/share' \
                              data-text='" + w +" just beat " + l + " on GitBattle " + 
                              wScore + " to " + lScore + ". Battle now to see if you can beat either of them:'\
-                             class='twitter-share-button' data-counturl='http://gitbattle.com' data-lang='en' data-url='http://www.gitbattle.com?u1=" + w + "&u2=" + l + "' data-size='medium' data-count='vertical'>Tweet</a> \
+                             class='twitter-share-button' data-counturl='gitbattle.com' data-lang='en' data-url='http://www.gitbattle.com?u1=" + w + "&u2=" + l + "' data-size='medium' data-count='vertical'>Tweet</a> \
                         <h5>about your victory (or loss)</h5> \
                         </div>");
 } 
