@@ -15,7 +15,7 @@ $(document).ready(function() {
 function handleEnter(e) {
     var code = e.keyCode || e.which;
     if (code == 13) {
-        event.preventDefault();
+        e.preventDefault();
         visualize();
     }
 }
