@@ -192,8 +192,10 @@ function setupWinner(u1, u2) {
         $('.result_2 h3, .result_2 h2').addClass('winner');
         twitter = twitterTemplate(users[1], users[0], u2Score, u1Score);
     }
-    $('.retry-container').prepend(twitter);
-    twttr.widgets.load();
+    if(twttr) {
+        $('.retry-container').prepend(twitter);
+        twttr.widgets.load();
+    }
 }
 
 var graphTemplate = $("<div class='graph-container'> \
