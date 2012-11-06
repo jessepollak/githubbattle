@@ -277,8 +277,16 @@ function dataFormatter(user1, user2, stat) {
             }
         }
     } else if (stat == 'forks' || stat == 'stars') {
-        var ratio1 = Math.round((user1[stat] / user1.repositories * 10)) / 10,
-            ratio2 = Math.round((user2[stat] / user2.repositories * 10)) / 10;
+        if(user1.repositories !== 0) {
+            var ratio1 = Math.round((user1[stat] / user1.repositories * 10)) / 10;
+        } else {
+            var ratio1 = 0;
+        }
+        if(user2.repositories !== 0) {
+            var ratio2 = Math.round((user2[stat] / user2.repositories * 10)) / 10;
+        } else {
+            var ratio2 = 0;
+        }
 
         if(ratio1 + ratio2 == 0) {
             var dp1 = 50,
