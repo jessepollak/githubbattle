@@ -228,7 +228,7 @@ function reset() {
     $(document.forms[0]).show();
     $('.winner-container').hide();
     $('.retry-container .twitter').remove();
-    $('.processing-container').empty();
+    $('.processing-container columns').empty();
 
     $('.result_1 h3, .result_1 h2').removeClass('loser');
     $('.result_2 h3, .result_2 h2').removeClass('winner');
