@@ -175,18 +175,12 @@ function setupWinner(u1, u2) {
     $('.result_2 h2').data('total', u2Score);
     var twitter;
     if(parseInt(u1Score) > parseInt(u2Score)) {
-        $('.result_2 h3, .result_2 h2').css({
-            'font-weight': 'normal'
-        });
-        $('.result_1 h3, .result_1 h2').css({
-            'color': 'rgb(250, 195, 0)'
-        });
+        $('.result_2 h3, .result_2 h2').addClass('loser');
+        $('.result_1 h3, .result_1 h2').addClass('winner');
         twitter = twitterTemplate(users[0], users[1], u1Score, u2Score);
     } else {
-        $('.result_1 h3, .result_1 h2').css('font-weight', 'normal');
-        $('.result_2 h3, .result_2 h2').css({
-            'color': 'rgb(250, 195, 0)'
-        });
+        $('.result_1 h3, .result_1 h2').addClass('loser');
+        $('.result_2 h3, .result_2 h2').addClass('winner');
         twitter = twitterTemplate(users[1], users[0], u2Score, u1Score);
     }
     $('.retry-container').prepend(twitter);
@@ -235,6 +229,11 @@ function reset() {
     $('.winner-container').hide();
     $('.retry-container .twitter').remove();
     $('.processing-container').empty();
+
+    $('.result_1 h3, .result_1 h2').removeClass('loser');
+    $('.result_2 h3, .result_2 h2').removeClass('winner');
+    $('.result_1 h3, .result_1 h2').removeClass('winner');
+    $('.result_2 h3, .result_2 h2').removeClass('loser');
     users = [];
 }
 
