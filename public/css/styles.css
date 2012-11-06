@@ -211,3 +211,12 @@ input:focus {
 .winner-container {
     margin-top: -50px!important;
 }
+
+.hn-container {
+    margin-top: 50px!important;
+}
+
+.hn-container h5 { 
+    color: white;
+    font-family: 'Titillium Web', sans-serif;
+}
