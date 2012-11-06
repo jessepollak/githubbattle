@@ -2,6 +2,13 @@
 
 var stats = ['age', 'stars', 'forks', 'commits', 'repositories', 'gists'], users = [];
 $(document).ready(function() {
+    var params = getUrlParams();
+    var u1 = params.u1;
+    var u2 = params.u2;
+
+    if(u1) $('.user1 input').val(u1);
+    if(u2) $('.user2 input').val(u2);
+
     $('#submit').click(visualize);
 
     $('.user2 input, .user1 input').focus(function() {
@@ -94,14 +101,14 @@ function visualize(e) {
                     localStorage.setItem(users[0], JSON.stringify(u1));
                     localStorage.setItem(users[1], JSON.stringify(u2));
                 }
-                setupGraphs(u1, u2, loadingInterval);
+                setupGraphs(u1, u2, loadingInterval, users);
             });
         }
     });
     
 }
 
-function setupGraphs(u1, u2, interval) {
+function setupGraphs(u1, u2, interval, users) {
     var saver = {},
         totals = {
             u1: 0,
@@ -116,7 +123,7 @@ function setupGraphs(u1, u2, interval) {
     });
     
     setupWinner(u1, u2);
-    displayGraphs($form, graphs, interval);
+    displayGraphs($form, graphs, interval, users);
 }
 
 function setupGraph(u1, u2, name, saver, totals) {
@@ -132,7 +139,7 @@ function setupGraph(u1, u2, name, saver, totals) {
     return graph;
 }
 
-function displayGraphs(form, graphs, interval) {
+function displayGraphs(form, graphs, interval, users) {
     clearInterval(interval);
     $(form).slideUp(500);
     $('.processing-container').hide();
@@ -146,7 +153,9 @@ function displayGraphs(form, graphs, interval) {
             g.slideDown(1000);
         });
         $('.retry-container').slideDown();
-        $(window).scrollTop($('.winner-container').offset().top);
+        var link = "http://gitbattle.com?u1=" + users[0] + "&u2=" + users[1];
+        $('.share-container h5 a').text(link).attr('href', link);
+        $('.share-container').show();
     });
 }
 
@@ -202,7 +211,7 @@ function twitterTemplate(w, l, wScore, lScore)  {
                             <a href='https://twitter.com/share' \
                              data-text='" + w +" just beat " + l + " on GitBattle " + 
                              wScore + " to " + lScore + ". Battle now to see if you can beat either of them:'\
-                             class='twitter-share-button' data-lang='en' data-url='http://www.gitbattle.com' data-size='medium' data-count='vertical'>Tweet</a> \
+                             class='twitter-share-button' data-lang='en' data-url='http://www.gitbattle.com?u1=" + w + "&u2=" + l + "' data-size='medium' data-count='vertical'>Tweet</a> \
                         <h5>about your victory (or loss)</h5> \
                         </div>");
 } 
@@ -463,4 +472,14 @@ function finalScore(user) {
 
     return final_score.toFixed(2);
 }
+
+function getUrlParams() {
+  var params = {};
+  window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(str,key,value) {
+    params[key] = value;
+  });
+ 
+  return params;
+}
+
 

@@ -221,6 +221,11 @@ input:focus {
     font-family: 'Titillium Web', sans-serif;
 }
 
+.share-container h5 {
+    color: white;
+    font-family: 'Titillium Web', sans-serif;
+}
+
 .loser {
     font-weight: normal!important;
 }
