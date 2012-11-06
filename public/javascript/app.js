@@ -183,7 +183,7 @@ function setupWinner(u1, u2) {
     $('.result_1 h2').data('total', u1Score);
     $('.result_2 h2').data('total', u2Score);
     var twitter;
-    if(parseInt(u1Score) > parseInt(u2Score)) {
+    if(parseFloat(u1Score) > parseFloat(u2Score)) {
         $('.result_2 h3, .result_2 h2').addClass('loser');
         $('.result_1 h3, .result_1 h2').addClass('winner');
         twitter = twitterTemplate(users[0], users[1], u1Score, u2Score);
