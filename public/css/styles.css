@@ -72,7 +72,7 @@ input:focus {
 
 
 .fight {
-    font-color: #ED1C24;    
+    font-color: #ED1C24;
 }
 
 #submit {
@@ -208,7 +208,7 @@ input:focus {
     margin-top: 50px!important;
 }
 
-.hn-container h5 { 
+.hn-container h5 {
     color: white;
 }
 
@@ -219,7 +219,14 @@ input:focus {
 .loser {
     font-weight: normal!important;
 }
+.loser a {
+    color: white;
+}
 
 .winner {
+    color: rgb(250, 195, 0)!important;
+}
+
+.winner a {
     color: rgb(250, 195, 0)!important;
 }
