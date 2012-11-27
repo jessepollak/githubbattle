@@ -50,7 +50,8 @@ function visualize(e) {
             promises.push($.Deferred(function(def) {
                 var key = i + 1;
                 $.ajax({
-                    url: GITHUB + 'users/' + users[i] + IDENTITY + '&callback=?',
+                    url: GITHUB + 'users/' + users[i] 
+                    + IDENTITY + '&callback=?',
                     success: function(data) {
                         if (data.data && data.data.message == "Not Found") {
                             $(form['user_' + key]).css('border', '5px solid rgb(186, 0,0)');
