@@ -147,7 +147,7 @@ var Scraper = function() {
                 function(resp, status, obj) {
                     if(resp.data) {
                         var user = false;
-                        if(resp.data.message === "Git Repository is empty.") {
+                        if(resp.data.message === "Git Repository is empty." || resp.data.message === "Not Found") {
                             def.resolve();
                             return;
                         }
