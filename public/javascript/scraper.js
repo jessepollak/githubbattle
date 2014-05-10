@@ -4,7 +4,7 @@
 IDENTITY = '?client_id=ac46392bf2f66282bc31&client_secret=563c93bb3e0c4d2b2d677c9acedf33a6f97bcd00'
 GITHUB = 'https://api.github.com/';
 
-var Scraper = function() {  
+var Scraper = function() {
     this.getUserData = function(USER, $el, user_def) {
         // if (typeof Storage !== 'undefined' && localStorage[USER]) {
         //     var user = JSON.parse(localStorage.getItem(USER));
@@ -12,7 +12,7 @@ var Scraper = function() {
         //         user_def.resolve(user);
         //         return;
         //     }
-        // } 
+        // }
 
         var forks = 0,
             stars = 0,
@@ -61,14 +61,14 @@ var Scraper = function() {
 
         $el.show();
         promises.push($.Deferred(
-            function(def) { 
+            function(def) {
                 getRepoData(GITHUB + 'users/' + USER + '/repos' + IDENTITY + '&per_page=100', def);
             }
         ));
 
         function getRepoData(url, def) {
             $.get(
-                url, 
+                url,
                 function(resp, status, obj) {
                     data = resp.data;
                     for(var i = 0; i < data.length; i++) {
@@ -79,7 +79,7 @@ var Scraper = function() {
                                 forks += e.forks;
                             }
                             if (e.watchers) stars += e.watchers;
-                            elChild.append('<h5 data-name="' + e.name + '">' 
+                            elChild.append('<h5 data-name="' + e.name + '">'
                                 + e.name + '</h5>');
                             promises.push($.Deferred(function (def) {
                                 getCommitCount(e.name, def);
@@ -92,7 +92,7 @@ var Scraper = function() {
 
                     if(next.hasNext) {
                         getRepoData(next.nextLink, def);
-                    } else {            
+                    } else {
                         def.resolve();
                         $.when.apply(null, promises).done(function(args1, args2) {
                             user_def.resolve({
@@ -106,8 +106,8 @@ var Scraper = function() {
                                 gists: gists
                             });
                         });
-                    }      
-                }, 
+                    }
+                },
                 'jsonp');
         }
 
@@ -130,8 +130,8 @@ var Scraper = function() {
                                     count += resp.length;
                                 }
                             });
-                        } 
-                    } 
+                        }
+                    }
                 }
             });
 
@@ -142,7 +142,11 @@ var Scraper = function() {
         }
 
         function getCommitCount(name, def) {
-            var url = GITHUB + 'repos/' + USER + '/' + name + '/contributors' + IDENTITY;
+            if (name.match(/http\:\/\//)) {
+                url = name;
+            } else {
+                url = GITHUB + 'repos/' + USER + '/' + name + '/contributors' + IDENTITY;
+            }
             $.get(url,
                 function(resp, status, obj) {
                     if(resp.data) {
@@ -169,7 +173,7 @@ var Scraper = function() {
                             if(linkHeader) {
                                 var next = hasNext(linkHeader);
                                 if(next.hasNext) {
-                                    getCommitCount(next.nextLink, name, def);
+                                    getCommitCount(next.nextLink, def);
                                 } else {
                                     if(def && def.state() == 'pending') {
                                         elChild.find('h5[data-name="' + name + '"]').remove();
