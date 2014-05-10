@@ -31,7 +31,6 @@ var Scraper = function() {
         promises.push($.get(GITHUB + 'users/' + USER + IDENTITY, function(data) {
             data = data.data;
             followers = data.followers;
-            console.log(followers, USER);
             createdAt = data.created_at;
             userData = data;
         }, 'jsonp'));
@@ -87,7 +86,6 @@ var Scraper = function() {
                         }
                     }
 
-                    console.log(resp.meta, USER)
                     var next= hasNext(resp.meta.Link);
 
                     if(next.hasNext) {
