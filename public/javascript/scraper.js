@@ -185,6 +185,8 @@ var Scraper = function() {
                                 }
                             }
                         }
+                    } else {
+                        def.resolve();
                     }
                 },
                 'jsonp'
