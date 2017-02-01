@@ -158,7 +158,7 @@ function displayGraphs(form, graphs, interval, users) {
             g.slideDown(1000);
         });
         $('.retry-container').slideDown();
-        var link = "http://gitbattle.com?u1=" + users[0] + "&u2=" + users[1];
+        var link = "http://githubbattle.com?u1=" + users[0] + "&u2=" + users[1];
         $('.share-container h5 a').text(link).attr('href', link);
         $('.share-container').show();
     });
@@ -216,9 +216,9 @@ var graphTemplate = $("<div class='graph-container'> \
 function twitterTemplate(w, l, wScore, lScore)  {
     return $("<div class='twitter'> \
                             <a href='https://twitter.com/share' \
-                             data-text='" + w +" just beat " + l + " on GitBattle " + 
+                             data-text='" + w +" just beat " + l + " on GithubBattle " + 
                              wScore + " to " + lScore + ". Battle now to see if you can beat either of them:'\
-                             class='twitter-share-button' data-counturl='gitbattle.com' data-lang='en' data-url='http://www.gitbattle.com?u1=" + w + "&u2=" + l + "' data-size='medium' data-count='vertical'>Tweet</a> \
+                             class='twitter-share-button' data-counturl='githubbattle.com' data-lang='en' data-url='http://githubbattle.com?u1=" + w + "&u2=" + l + "' data-size='medium' data-count='vertical'>Tweet</a> \
                         <h5>about your victory (or loss)</h5> \
                         </div>");
 } 
